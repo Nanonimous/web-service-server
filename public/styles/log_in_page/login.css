@@ -1,0 +1,343 @@
+*{
+  padding: 0;
+  margin: 0;
+}
+
+.main_container{
+  display: flex;
+  flex-direction: column;
+}
+
+body{
+  background-color: #0f0f11;
+  overflow-y: hidden;
+}
+.img_container{
+  align-self: center;
+  border: solid 2px black;
+  background-image: url("../../public/images/lanch_page/zeotion.png");
+  width: 75px;
+}
+#eyeicon{
+  position: relative;
+  color: white;
+  border: none;
+  left: 80px;
+  bottom: 40px;
+  background: transparent;
+
+}
+input {
+  /* Your existing styles */
+  border: 1px solid red; /* Add this line to set the default border color to red */
+}
+
+
+#eyeicon1{
+  position: relative;
+  color: white;
+  border: none;
+  left: 140px;
+  bottom: 42px;
+  background: transparent;
+
+}
+.pass_word{
+  display: flex;
+  width: 100%;
+
+}
+img{
+  width: 75px;
+}
+
+.auth_container{
+  margin: 25px;
+  padding: 60px;
+  display: flex;
+  justify-content: center;
+  gap:20px;
+}
+
+
+label {
+  display: block;
+  width: 100%;
+  font-size: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  text-align: left;
+  color: white;
+}
+
+input {
+  display: block;
+  color: white;
+  border: none;
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  outline: none;
+background-color: #1B1A55;
+  
+}
+
+
+input:focus{
+  border: 3px solid #6941F5;
+  background-color: #030637;
+}
+
+input::selection{
+  border: 5px solid red;
+}
+
+#password:valid{
+  border: 1px solid green;
+}
+#password:invalid{
+  border: 1px solid red;
+}
+
+#username:valid{
+  border: 1px solid green;
+}
+#username:invalid{
+  border: 1px solid red;
+}
+
+#email:valid{
+  border: 1px solid green;
+}
+#email:invalid{
+  border: 1px solid red;
+}
+/* sign-in part */
+
+.horizontal-text-signin{
+  transform: rotate(90deg);
+  color: white;
+  font-weight: bolder;
+  font-size: 1.5em;
+}
+
+
+.main-left{
+  display: flex;
+
+}
+
+.signin_container{
+  background-color: #17171A;
+  display: flex;
+  gap: 20px;
+  border-radius: 5px;
+  border-right: 2px solid #6941F5;
+  border-top: 2px solid #6941F5;
+  border-bottom: 2px solid #6941F5;
+  justify-content: center;
+}
+
+.colored_border{
+  background-color: rgb(5, 6, 45);
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+.sign-in-extender{
+  border: solid 2px black;
+  background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+  height: 29.7em;
+  padding: 4px;
+  border-radius: 5px;
+}
+.sign-in-extender:hover{
+  cursor: pointer;
+}
+.horizontal-text-signin{
+  transform: rotate(-90deg);
+  font-weight: bolder;
+  font-size: 1.5em;
+}
+
+.signin_container{
+  padding-top: 30px;
+  width: 70%;
+  border-left: 2px solid hsla(0, 0%, 0%, 0.9);
+}
+
+.sign-in-text{
+  display: flex;
+  justify-content: center;
+  font-size: 2em;
+  margin-bottom: 1em;
+}
+
+.sign-in-text span{
+  background-image: linear-gradient(111deg, #f85d7f, #6b81fa);
+background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+.signin_oauth{
+  padding-top: 35%;
+}
+
+.go_back {
+  align-items: center;
+  background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+  border: 0;
+  border-radius: 8px;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  display: flex;
+  font-family: Phantomsans, sans-serif;
+  font-size: 18px;
+  justify-content: center;
+  line-height: 1em;
+  max-width: 100%;
+  min-width: 60px;
+  padding: 3px;
+  margin-bottom: 4px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all .3s;
+ }
+ 
+ .go_back:disabled{
+  opacity: .3;
+ }
+ .go_back:disabled:hover span{
+  background-color: rgb(5, 6, 45);
+ }
+
+ .go_back:active,
+ .go_back:hover {
+  outline: 0;
+ }
+ 
+ .go_back span {
+  background-color: rgb(5, 6, 45);
+  padding: 10px 18px;
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  transition: 300ms;
+ }
+ 
+ .go_back:hover span {
+  background: none;
+ }
+ 
+ .go_back:active {
+  transform: scale(0.9);
+ }
+
+
+/* sign-up part  */
+
+
+.main-right{
+  display: flex;
+}
+
+.signup_container{
+  border-left: 2px solid #6941F5;
+  border-top: 2px solid #6941F5;
+  border-bottom: 2px solid #6941F5;
+  display: flex;
+  gap: 20px;
+  border-radius: 5px;
+  justify-content: center;
+  background-color: #17171A;
+  border-right: 2px solid hsla(0, 0%, 0%, 0.9);
+}
+
+.sign-up-extender:hover{
+  cursor: pointer;
+}
+.signup_main{
+  padding-top: 30px;
+  width: 100%;
+  height:22.72em;
+}
+
+.sign-in-text{
+  display: flex;
+  justify-content: center;
+  font-size: 2em;
+  margin-bottom: 1em;
+  color: white;
+}
+
+.sign-up-extender{
+  background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+  height: 29.6em;
+  padding: 4px;
+  border-radius: 5px;
+}
+.horizontal-text-signup{
+  transform: rotate(90deg);
+  color: white;
+ 
+}
+.signup_oauth{
+  padding-top: 35%;
+}
+
+/* that expanding effect */
+/* Updated parts for animation */
+.container {
+  display: flex; /* Change from none to flex to allow transition */
+  overflow: hidden;
+  width: 0; /* Start closed */
+  gap: 20px;
+  transition: width 0.5s ease-out; /* Adjust time as needed */
+}
+
+
+.sign_in_animation{
+  width: 20em;
+  padding: 50px;
+  height:23.89em;
+}
+
+.animation_for_extender{
+  background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+}
+
+
+.sign_up_animation{
+  width: 20em;
+  height:23.72em;
+  padding: 50px;
+}
+
+/* Base styles remain the same, insert media query below existing CSS */
+
+.forget_pass{
+  margin-bottom:15px;
+  display: flex;
+  justify-content: start;
+
+}
+
+.forget_pass a{
+  text-decoration: none;
+  color: white;
+}
+
+.forget_pass a:hover{
+  color: #535C91;
+}

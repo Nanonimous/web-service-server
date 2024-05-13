@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+    <link rel="icon" type="image/x-icon" href="../../images/lanch_page/favicon.png">    <link rel="stylesheet" href="../../styles/log_in_page/forget_pass.css">
+</head>
+<body>
+    <div class="forgot-password-container">
+        <span>
+        <div class="content">
+            <h2><span>FORGET PASSWORD</span></h2>
+            <p>Please enter your email address to request a password reset.</p>
+        </div>
+        <form id="forgotPasswordForm" action="/reset_otp" method="post">
+            <input type="email" id="emailInput" placeholder="Enter your email" name="email" required>
+            <button type="submit" class="go_back"><span>Send otp Link</span></button>
+        </form>
+        <p id="message"></p>
+    </span>
+    </div>
+</body>
+</html>

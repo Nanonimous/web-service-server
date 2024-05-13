@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>login</title>
+  <link rel="icon" type="image/x-icon" href="../../images/lanch_page/favicon.png">
+    <link rel="stylesheet" href="/styles/log_in_page/login.css">
+    <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+</head>
+<body>
+  <!-- overall main container -->
+    <div class="main_container">
+      <!-- wesite logo division -->
+      <!-- <div class="img_container">
+        <img src="../../public/images/lanch_page/zeotion.png" alt="" class="main_logo">
+      </div> -->
+      <!-- sign inand register division -->
+      <div class="auth_container">
+        <!-- left side login part -->
+        <div class="main-left">
+          <div class="sign-in-extender">
+            <div class="colored_border" id="sign_in_select">
+              <h2 class="horizontal-text-signin">sign-in</h2>
+            </div>
+          </div>
+          <div class="signin_container container">
+            <div class="signin_main">
+              <center>
+              <div class="sign-in-text"><span>SIGN-IN</span></div>
+              <form action="/login" method="POST" autocomplete="off">
+                <label for="">username:</label>
+                <input type="text" placeholder="username" name="username">
+                <label for="">pass:</label>
+                  <input type="password" placeholder="pass" name="password" id="inputpassword">
+                  <ion-icon name="eye" id="eyeicon" onclick="pass()" ></ion-icon>
+                <div class="forget_pass">
+                  <a href="/forget_pass" >forget password?</a>
+                </div>
+                <button class="go_back"><span class="text">Sign In</span></button>
+              </form>
+            </center>
+            </div>
+          </div>
+        </div>
+        <!-- right side register part -->
+        <div class="main-right">
+          <div class="signup_container container"> 
+            <div class="signup_main">
+              <center>
+              <div class="sign-in-text"><span>SIGN-UP</span></div>
+              <form action="/opt_verify" method="post" id="register_form" autocomplete="off">
+                <label for="">username:</label>
+                <input type="text" id="username" placeholder="username" name="username" required>
+                <label for="">enter the email</label>
+                <input type="email" id="email" placeholder="example@gmail.com" name="email" required>
+                <label for="">create password</label>
+                <input type="password" placeholder="password" name="password" id="password" required>
+                <ion-icon name="eye" id="eyeicon1" onclick="pass1()" ></ion-icon>
+                <button class="go_back" id="reg_button" disabled ><span class="text">register</span></button>
+              </form>
+              <div id="usernameStatus" style="color: red;"></div>
+              <div id="emailStatus" style="color: red;"></div>
+            </center>
+            </div>
+          </div>
+          <div class="sign-up-extender">
+            <div class="colored_border" id="sign_up_select">
+            <h2 class="horizontal-text-signup">sign-up</h2>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <script src="/js_files/log_in_page/login.js"></script>
+</body>
+</html>

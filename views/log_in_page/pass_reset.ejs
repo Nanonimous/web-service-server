@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+    <link rel="icon" type="image/x-icon" href="../../images/lanch_page/favicon.png">
+    <link rel="stylesheet" href="../../styles/log_in_page/forget_pass.css">
+</head>
+<body>
+    <div class="forgot-password-container">
+            <span>
+                <center>
+        <div class="content">
+        <h2><span>NEW PASSWORD</span></h2>
+        <p>enter the new password and do not forget it please :) </p>
+    </div>
+        <form id="forgotPasswordForm" action="/update_pass" method="post">
+            <input type="text" id="emailInput" placeholder="new password" required name="password">
+            <button type="submit" class="go_back"><span class="text">CHANGE PASSWORD</span></button>
+        </form>
+        <p id="message"></p>
+    </center>
+    </span>
+    </div>
+</body>
+</html>
