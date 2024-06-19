@@ -5,7 +5,9 @@
   "main": "backend_axios.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend_axios.js",
+    "dev": "nodemon backend_axios.js"
   },
   "author": "Hirthick",
   "license": "ISC",
