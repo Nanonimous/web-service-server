@@ -4,7 +4,7 @@ import {dirname} from "path";
 import { fileURLToPath } from "url";
 import axios from "axios";
 import multer from "multer";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import session from "express-session";
