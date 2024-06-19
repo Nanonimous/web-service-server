@@ -15,7 +15,7 @@ import { error } from "console";
 
  
 const server = express(); 
-const port = process.env.PORT || 10000;
+const port = 4000;
 const saltRounds  =10;
 const dir = dirname(fileURLToPath(import.meta.url));
 const upload = multer({});
@@ -25,8 +25,8 @@ const our_domain="http://localhost:4000/"
 var dept =""; 
 var sub="";
 let datas = []
-let otp;
-
+let otp;    
+  
 server.use(express.static("public"));
 server.use(body.urlencoded({extended:true,limit:'100mb'}));
 server.use(body.json({limit:'100mb'}));
@@ -52,12 +52,17 @@ let transporter = nodemailer.createTransport({
   }
 });
 server.use((req, res, next) => {
+  try{
   // Store current URL as previous URL in session
   if (req.session) {
       req.session.previousUrl = req.session.currentUrl || '';
       req.session.currentUrl = req.originalUrl;
   }
   next();
+} catch (error) {
+  console.error('Error fetching department data:', error);
+  res.status(500).send('Internal Server Error');
+}
 });
 
 //send the response as lanch page 
@@ -67,11 +72,25 @@ server.get("/",(req,res)=>{
  
 //send the log in page to client
 
-server.get("/log_in",
-  (req,res)=>{
+server.get("/log_out",(req, res) =>{
+  try{
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/")
+  });
+}catch(err){
+  console.error('Error fetching department data:', err);
+  res.status(500).send('Internal Server Error');
+}
+});
+
+server.get("/log_in",(req,res)=>{
+  try{
     if(req.isAuthenticated()){
       req.logout(function (err) {
-        if (err) {
+        if (err) { 
           return next(err);
         }
         res.redirect("/log_in")
@@ -79,8 +98,17 @@ server.get("/log_in",
     }else{
       res.render("log_in_page/login.ejs");
     }
+  }catch(err){
+    console.error('Error fetching department data:', err);
+    res.status(500).send('Internal Server Error');
+  }
 })
  
+server.get("/axios_test_api",async(req,res)=>{
+  let datas  = await axios.get("https://www.google.com/search?q=ipl&oq=&gs_lcrp=EgZjaHJvbWUqCQgAECMYJxjqAjIJCAAQIxgnGOoCMgkIARAjGCcY6gIyCQgCECMYJxjqAjIPCAMQLhgnGMcBGOoCGNEDMgkIBBAjGCcY6gIyCQgFECMYJxjqAjIJCAYQLhgnGOoCMgkIBxAjGCcY6gLSAQg1ODI3ajBqN6gCCLACAQ&sourceid=chrome&ie=UTF-8");
+  res.send(datas.data);
+})
+
 //for authentication and login 
 server.post("/login", 
     passport.authenticate("local", {
@@ -111,6 +139,7 @@ server.post("/login",
 });
 
 server.post("/user_check", async(req,res)=>{
+  try{
     const checkResult = await axios.post(`${domain}login/auth`,{
       "username": req.body.username
     });
@@ -120,6 +149,11 @@ server.post("/user_check", async(req,res)=>{
     else{
       res.json({ available: true, message: 'Username is available.' });
     }
+  }
+  catch(err){
+    console.error('Error fetching department data:', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 //for registation and hasing the password 
@@ -427,6 +461,7 @@ server.get("/register",async(req,res)=>{
 
 //resetting password email
 server.post("/reset_otp",(req,res)=>{
+  
   otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
   datas[2]=req.body.email;
   transporter.sendMail({
@@ -554,6 +589,7 @@ server.get("/forget_pass",(req,res)=>{
 });
 
 server.post("/reset_pass",async(req,res)=>{
+  try{
   var no1 = req.body.no1;
   var no2 = req.body.no2;
   var no3 = req.body.no3;
@@ -566,9 +602,15 @@ server.post("/reset_pass",async(req,res)=>{
   if(output==otp){
     res.render("./log_in_page/pass_reset.ejs");
   }
+}
+catch(err){
+  console.error('Error fetching department data:', err);
+  res.status(500).send('Internal Server Error');
+}
 });  
 
 server.post("/update_pass", async(req,res)=>{
+  try{
   var updated_pass = req.body.password;
   console.log(updated_pass);
   bcrypt.hash(updated_pass, saltRounds, async (err, hash) => { 
@@ -581,6 +623,10 @@ server.post("/update_pass", async(req,res)=>{
       });   
     }});
     res.redirect("/log_in");
+  }catch(err){
+    console.error('Error fetching department data:', err);
+    res.status(500).send('Internal Server Error');
+  }
    
 }); 
 
@@ -588,9 +634,10 @@ server.get('/favicon.ico', (req, res) => res.status(204));
 
 //selecting the depertment and subject
 server.get("/:dept",async(req,res)=>{
-  if(req.isAuthenticated()){
-
-    try{
+  
+  
+  try{
+      if(req.isAuthenticated()){
       let dept = ["IOT","FT","IT","MECH","EEE","ROBOTICS","CSE","ECE","AIML"];
   
       let select = req.params.dept;
@@ -606,21 +653,22 @@ server.get("/:dept",async(req,res)=>{
       res.render("dept_selecting_page/rechange.ejs",{"dept":dept,"sem_sub":data,"select":select.toUpperCase()});
   }else{
       res.send("page not found");
+  }}else{
+    res.redirect("/log_in");
   }
   }catch(err){
       res.send('page not found');
   }
-    }else{
-    res.redirect("/log_in");
-  }
 });
-
 
 // get into subject page to select the unit
 
 server.get("/:dept/:sub/:unit",async(req,res)=>{
-
   try{
+    if(req.isAuthenticated()){
+  
+
+    
     dept = req.params.dept;
     sub = req.params.sub;
     const unit = parseInt(req.params.unit);
@@ -648,17 +696,20 @@ if(check === "teacher" ){
   if(check === "stud"){
     res.render("without_plus_student/subject_page.ejs",{"sub":sub,"dept":dept,"unit":unit,"topics":topic_arr,domain:domain});
     
-}}}else
+}else{
     res.send("page not found");
 
-}catch(err){
+}}}}else{
+  res.redirect("/log_in");
+}}
+catch(err){
      res.send(err);
  }
 });
 // add a new topic to the database
 server.post("/:dept/:sub/:unit/new_topic",async(req,res)=>{
-
   try{
+    if(req.isAuthenticated()){
     sub = req.params.sub;
     const unit = parseInt(req.params.unit);
     const data = req.body.topic;
@@ -674,6 +725,8 @@ server.post("/:dept/:sub/:unit/new_topic",async(req,res)=>{
     res.redirect((`/${dept}/${sub}/${unit}`))
 )}else{
     res.send("page not found");
+}}else{
+  res.redirect("/log_in");
 }
 }catch(err){
     res.send(err);
@@ -688,6 +741,7 @@ server.post("/:dept/:sub/:unit/new_topic",async(req,res)=>{
 
 server.get("/:dept/:sub/:unit/:topic/doc_res",async(req,res)=>{
     try{
+      if(req.isAuthenticated()){
     const dept =req.params.dept;
      sub=req.params.sub;
     const unit =req.params.unit;
@@ -710,6 +764,9 @@ res.render("source_document/resource_document.ejs",{"sub":sub,"dept":dept,"unit"
       if(check === "stud"){
 res.render("source_document/resource_document_without_plus.ejs",{"sub":sub,"dept":dept,"unit":unit,"topic":topic,"data":data})
     }}
+  }else{
+      res.redirect("/log_in");
+    }
 }catch(err){
     res.send(err);
 }
@@ -719,6 +776,7 @@ res.render("source_document/resource_document_without_plus.ejs",{"sub":sub,"dept
 
 server.get("/:dept/:sub/:unit/:topic/link_res",async(req,res)=>{
   try{
+    if(req.isAuthenticated()){
     const dept =req.params.dept;
     sub=req.params.sub;
     const unit =req.params.unit;
@@ -739,6 +797,9 @@ server.get("/:dept/:sub/:unit/:topic/link_res",async(req,res)=>{
     }else{if(check === "stud"){
         res.render("source_link/resource_link_without_plus.ejs",{"sub":sub,"dept":dept,"unit":unit,"topic":topic,"data":data})
     } }
+  }else{
+    res.redirect("/log_in");
+  }
     }catch(err){
         res.send(err)
     }
@@ -749,6 +810,7 @@ server.get("/:dept/:sub/:unit/:topic/link_res",async(req,res)=>{
 
 server.get("/:dept/:sub/:unit/:topic/video_res",async(req,res)=>{
   try{
+    if(req.isAuthenticated()){
     const dept =req.params.dept;
     sub=req.params.sub;
     const unit =req.params.unit;
@@ -768,6 +830,9 @@ server.get("/:dept/:sub/:unit/:topic/video_res",async(req,res)=>{
         }else{if(check === "stud"){
         res.render("sorce_video/resource_without_plus.ejs",{"sub":sub,"dept":dept,"unit":unit,"topic":topic,"data":data})
         }}
+      }else{
+        res.redirect("/log_in");
+      }
     }catch(err){
         res.send(err)
     }
@@ -778,6 +843,7 @@ server.get("/:dept/:sub/:unit/:topic/video_res",async(req,res)=>{
 
 server.post("/:dept/:sub/:unit/:topic/link_res",async(req,res,next)=>{
   try{
+    if(req.isAuthenticated()){
     const dept =req.params.dept;
     sub=req.params.sub;
     const unit =req.params.unit;
@@ -791,6 +857,9 @@ server.post("/:dept/:sub/:unit/:topic/link_res",async(req,res,next)=>{
     "body":req.body
     })
    res.redirect((`${our_domain}${dept}/${sub}/${unit}/${topic}/link_res`));
+  }else{
+    res.redirect("/log_in");
+  }
 }catch(err){
     res.send(err);
 }
@@ -801,6 +870,7 @@ server.post("/:dept/:sub/:unit/:topic/link_res",async(req,res,next)=>{
 
 server.post("/:dept/:sub/:unit/:topic/video_res",async(req,res,next)=>{
   try{
+    if(req.isAuthenticated()){
     const dept =req.params.dept;
     sub=req.params.sub;
     const unit =req.params.unit;
@@ -814,6 +884,9 @@ server.post("/:dept/:sub/:unit/:topic/video_res",async(req,res,next)=>{
     "body":req.body
     })
     res.redirect((`${our_domain}${dept}/${sub}/${unit}/${topic}/video_res`));
+  }else{
+    res.redirect("/log_in");
+  }
 }catch(err){
     res.send(err)
 }
@@ -823,6 +896,7 @@ server.post("/:dept/:sub/:unit/:topic/video_res",async(req,res,next)=>{
 
 server.post("/:dept/:sub/:unit/:topic/doc_res",upload.single('file'),async(req,res)=>{
   try{
+    if(req.isAuthenticated()){
     const dept =req.params.dept;
      sub=req.params.sub;
     const unit =req.params.unit;
@@ -844,7 +918,7 @@ server.post("/:dept/:sub/:unit/:topic/doc_res",upload.single('file'),async(req,r
         break;
       case "Microsoft PowerPoint Presentation":
       case "Microsoft PowerPoint Presentation x":
-        iconClass = "fa-light fa-file-ppt";
+        iconClass = "fa-solid fa-file-ppt";
         break;
       case "MP4 Video":
         iconClass = "ri-video-fill";
@@ -868,6 +942,9 @@ server.post("/:dept/:sub/:unit/:topic/doc_res",upload.single('file'),async(req,r
 
 
 res.redirect((`${our_domain}${dept}/${sub}/${unit}/${topic}/doc_res`));
+}else{
+  res.redirect("/log_in");
+}
     }catch(err){
         res.send(err)
     }
@@ -877,7 +954,9 @@ res.redirect((`${our_domain}${dept}/${sub}/${unit}/${topic}/doc_res`));
 
 server.get("/:dept/:sub/:unit/:topic/doc_res/show_doc",async(req,res)=>{
 
-  try{ const dept =req.params.dept;
+  try{ 
+    if(req.isAuthenticated()){
+    const dept =req.params.dept;
    sub=req.params.sub;
    const unit =req.params.unit;
    const topic = req.params.topic;
@@ -899,6 +978,7 @@ console.log(req.query['file_name']);
         res.send(`<embed src="data:application/pdf;base64,${data}" type="application/pdf" " style="background-color:black;height:100vh;width:100%">`);
         break;
       case "JPG Image":
+      case "JPEG Image":
         res.send(`<img src="data:image/jpeg;base64,${data}" alt="JPG Image" style="background-color:black;height:100vh;width:100%">`);
         break;
       case "PNG Image":
@@ -936,6 +1016,9 @@ console.log(req.query['file_name']);
       default:
         res.status(400).send('Unsupported file type');
     }
+  }else{
+    res.redirect("/log_in");
+  }
 }catch(err){
    console.log(`this is ${err}`);
 
@@ -945,7 +1028,7 @@ console.log(req.query['file_name']);
 
 server.post("/:dept/:sub/stu/new_topics",async(req,res)=>{
   try{
-
+    if(req.isAuthenticated()){
   const {dept,sub} = req.params;
   const new_topic = req.body.topic; 
 console.log(dept,sub,new_topic);
@@ -955,6 +1038,9 @@ const respond = await axios.post(`${domain}stu_add_topic`,{
   "topic":new_topic,
   "user_name":req.user.username
 },res.redirect(`${our_domain}${dept}/${sub}/student/own_work`))
+}else{
+  res.redirect("/log_in");
+}
   }catch(err){
     res.send(err)
   }
@@ -966,6 +1052,7 @@ const respond = await axios.post(`${domain}stu_add_topic`,{
 
 server.get("/:dept/:sub/student/own_work",async(req,res)=>{
   try{
+    if(req.isAuthenticated()){
   dept =req.params.dept;
   sub=req.params.sub;
 
@@ -982,6 +1069,9 @@ const topic= await axios.post(`${domain}show_stu_topic`,{
 const arr = topic.data;
 console.log(arr)
 res.render("with_plus_for_student/subject_page.ejs",{dept:dept,"topics":arr,sub:sub,domain:our_domain});
+}else{
+  res.redirect("/log_in");
+}
   }catch(err){
     res.send(err)
   }
@@ -991,7 +1081,8 @@ res.render("with_plus_for_student/subject_page.ejs",{dept:dept,"topics":arr,sub:
 //student own work document take
 
 server.get("/:dept/:sub/student/own_work/:topic/doc_res",async(req,res)=>{
-   
+  try{
+    if(req.isAuthenticated()){
   const dept =req.params.dept;
   const sub=req.params.sub;
   const topic =req.params.topic;
@@ -1011,11 +1102,20 @@ res.render("source_document/resource_document_for_student.ejs",{
   "topic":topic,
   "data":data
 })
+}else{
+  res.redirect("/log_in");
+}
+  }catch(error){
+    console.error('Error fetching department data:', error);
+    res.status(500).send('Internal Server Error');
+  }
 })
 
 //student own work link take 
 
 server.get("/:dept/:sub/student/own_work/:topic/link_res",async(req,res)=>{
+try{
+  if(req.isAuthenticated()){
   const dept =req.params.dept;
   const sub=req.params.sub;
   const user_name = req.user.username;
@@ -1035,11 +1135,20 @@ res.render("source_link/resource_link_for_student.ejs",{
   "topic":topic,
   "data":data
 })
+}else{
+  res.redirect("/log_in");
+}
+}catch(err){
+  console.error('Error fetching department data:', erro);
+  res.status(500).send('Internal Server Error');
+}
 }) 
 
 //student own work video take
 
 server.get("/:dept/:sub/student/own_work/:topic/video_res",async(req,res)=>{
+  try{
+    if(req.isAuthenticated()){
   const dept =req.params.dept;
   const sub=req.params.sub;
   const user_name = req.user.username;
@@ -1059,6 +1168,13 @@ res.render("sorce_video/resource_for_student.ejs",{
   "topic":topic,
   "data":data
 })
+}else{
+  res.redirect("/log_in");
+}
+  }catch(err){
+    console.error('Error fetching department data:', err);
+    res.status(500).send('Internal Server Error');
+  }
 })
 
 
@@ -1066,6 +1182,7 @@ res.render("sorce_video/resource_for_student.ejs",{
 
 server.post("/:dept/:sub/student/own_work/:topic/link_res",async(req,res,next)=>{
   try{
+    if(req.isAuthenticated()){
     const dept =req.params.dept;
     const sub=req.params.sub;
     const topic = req.params.topic;
@@ -1080,6 +1197,9 @@ server.post("/:dept/:sub/student/own_work/:topic/link_res",async(req,res,next)=>
     "body":req.body
     })
    res.redirect((`${our_domain}${dept}/${sub}/student/own_work/${topic}/link_res`));
+  }else{
+    res.redirect("/log_in");
+  }
 }catch(err){
     res.send(err);
 }
@@ -1090,6 +1210,7 @@ server.post("/:dept/:sub/student/own_work/:topic/link_res",async(req,res,next)=>
 
   server.post("/:dept/:sub/student/own_work/:topic/video_res",async(req,res,next)=>{
     try{
+      if(req.isAuthenticated()){
       const dept =req.params.dept;
       const sub=req.params.sub;
       const user_name = req.user.username;
@@ -1104,6 +1225,9 @@ server.post("/:dept/:sub/student/own_work/:topic/link_res",async(req,res,next)=>
       "body":req.body
       })
       res.redirect((`${our_domain}${dept}/${sub}/student/own_work/${topic}/video_res`));
+    }else{
+      res.redirect("/log_in");
+    }
   }catch(err){
       res.send(err)
   } 
@@ -1114,6 +1238,7 @@ server.post("/:dept/:sub/student/own_work/:topic/link_res",async(req,res,next)=>
 
 server.post("/:dept/:sub/student/own_work/:topic/doc_res",upload.single('file'),async(req,res)=>{
   try{
+    if(req.isAuthenticated()){
     const dept =req.params.dept;
     const  sub=req.params.sub;
     const topic = req.params.topic;
@@ -1160,6 +1285,9 @@ server.post("/:dept/:sub/student/own_work/:topic/doc_res",upload.single('file'),
 
 
 res.redirect((`${our_domain}${dept}/${sub}/student/own_work/${topic}/doc_res`));
+}else{
+  res.redirect("/log_in");
+}
     }catch(err){
         res.send(err)
     } 
@@ -1169,7 +1297,8 @@ res.redirect((`${our_domain}${dept}/${sub}/student/own_work/${topic}/doc_res`));
 
 
 server.get("/:dept/:sub/student/own_work/:topic/doc_res/show_doc",async(req,res)=>{
-
+  try{
+    if(req.isAuthenticated()){
    const dept =req.params.dept;
     const  sub=req.params.sub;
     const user_name = req.user.username;
@@ -1229,14 +1358,19 @@ console.log(respond.data.document)
       default:
         res.status(400).send('Unsupported file type');
     }
-// }catch(err){
-//    console.log(`this is ${err}`);
+  }else{
+    res.redirect("/log_in");
+  }
+}catch(err){
+   console.log(`this is ${err}`);
 
-// }
+}
 })
 
 
 server.get("/:dept/:sub/:unit/:topic/delete_topic",async(req,res)=>{
+  try{
+    if(req.isAuthenticated()){
   console.log(req.params);
   const dept =req.params.dept;
   const sub=req.params.sub; 
@@ -1251,11 +1385,19 @@ server.get("/:dept/:sub/:unit/:topic/delete_topic",async(req,res)=>{
     "topic":topic 
   })
 res.redirect(`${our_domain}${dept}/${sub}/${unit}`);
+}else{
+  res.redirect("/log_in");
+}
+  }catch(err){
+    console.error('Error fetching department data:', err);
+    res.status(500).send('Internal Server Error');
+  }
 
 })   
 
 server.get("/:dept/:sub/student_work/own_work/:topic/delete",async(req,res)=>{
-
+  try{
+    if(req.isAuthenticated()){
   const dept =req.params.dept;
   const sub=req.params.sub; 
   const topic = req.params.topic;
@@ -1268,6 +1410,13 @@ const respond = await axios.post(`${domain}stu_delete_topic`,{
   "user_name":user 
 })
 res.redirect(`/${dept}/${sub}/student/own_work`);
+}else{
+  res.redirect("/log_in");
+}
+  }catch(err){
+    console.error('Error fetching department data:', err);
+    res.status(500).send('Internal Server Error');
+  }
 })
 
 
