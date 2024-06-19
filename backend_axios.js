@@ -8,19 +8,17 @@ import bcrypt from "bcryptjs";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import session from "express-session";
-import pg from "pg";
 import nodemailer from "nodemailer";
-import {query} from "express-validator";
-import { error } from "console";
+import 'dotenv/config';
 
  
 const server = express(); 
-const port = 4000;
-const saltRounds  =10;
+const port = process.env.PORT || 4000;
+const saltRounds = 10;
 const dir = dirname(fileURLToPath(import.meta.url));
 const upload = multer({});
-const domain = "http://localhost:3000/";
-const our_domain="http://localhost:4000/"
+const domain = "https://zenotion-api.onrender.com/";
+const our_domain="https://zenotion.onrender.com/"
 
 var dept =""; 
 var sub="";
