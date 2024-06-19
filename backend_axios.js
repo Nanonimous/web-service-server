@@ -17,8 +17,8 @@ const port = process.env.PORT || 4000;
 const saltRounds = 10;
 const dir = dirname(fileURLToPath(import.meta.url));
 const upload = multer({});
-const domain = "https://zenotion-api.onrender.com/";
-const our_domain="https://zenotion.onrender.com/"
+const domain = process.env.API_DOMAIN;
+const our_domain=process.env.MAIN_DOMAIN;
 
 var dept =""; 
 var sub="";
@@ -30,7 +30,7 @@ server.use(body.urlencoded({extended:true,limit:'100mb'}));
 server.use(body.json({limit:'100mb'}));
 server.use(
     session({
-      secret: "ilovethaiyal",
+      secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: true,
     })
@@ -42,11 +42,11 @@ server.use(passport.session());
 //otp sending part bro
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",  // SMTP server host
-  port: 587,                 // SMTP port (587 for TLS)
+  port: process.env.MAIL_PORT || 587,                 // SMTP port (587 for TLS)
   secure: false,             // true for 465 (SSL), false for other ports
   auth: {
-      user: 'zenotionsolutions@gmail.com',
-      pass:  'hlem wpqf vpdt gntv'
+      user: process.env.MAIL_EMAIL,
+      pass: process.env.MAIL_PASS
   }
 });
 server.use((req, res, next) => {
@@ -463,7 +463,7 @@ server.post("/reset_otp",(req,res)=>{
   otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
   datas[2]=req.body.email;
   transporter.sendMail({
-    from: '"Zenotion" <dreamdj0071@gmail.com>', // sender address
+    from: '"Zenotion" <zenotionsolutions@gmail.com>', // sender address
     to: `${datas[2]}`,                  // list of receivers 
     subject: `Your Code: ${otp}`,                          // Subject line
     text: `Your OTP is for resetting: ${otp}`,                  // plain text body
@@ -1417,43 +1417,6 @@ res.redirect(`/${dept}/${sub}/student/own_work`);
   }
 })
 
-
-
-// passport.use(  
-//     "local",
-//     new Strategy(async function verify(username, password, cb) {
-//       try { 
-//         let result = await axios.post(`${domain}login/auth`,{
-//             "username":username
-//         }
-//         );
-//         if (result.data.length > 0) {
-//             const user = result.data[0];
-//           const storedHashedPassword = user.password;
-//           console.log(storedHashedPassword);
-  
-//               bcrypt.compare(password, storedHashedPassword, (err, valid) => {
-//                 if (err) {
-//                   console.error("Error comparing passwords:", err);
-//                   return cb(err);
-//                 } else {
-//                   console.log(valid);
-//                   if (valid) {
-//                     return cb(null, user);
-//                   } else {
-//                     return cb(null, false);
-//                   }
-//                 }
-//               });
-
-//         } else {
-//           return cb("User not found");
-//         }
-//       } catch (err) {
-//         console.log(err);
-//       }
-//     })
-//   );
 passport.use(
   "local",
   new Strategy(async function verify(username, password, cb) {
